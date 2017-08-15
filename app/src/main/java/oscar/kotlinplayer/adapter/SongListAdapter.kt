@@ -59,11 +59,11 @@ class SongListAdapter(var context: Context) : BaseAdapter() {
         viewHolder.singerTxt!!.text = song.artist
 
         if (position == SongManager.instance.curIndex) {
-            viewHolder.songTxt!!.textColor = R.color.colorSongSelect
-            viewHolder.singerTxt!!.textColor = R.color.colorSingerSelect
+            viewHolder.songTxt!!.textColor = context.resources.getColor(R.color.colorSongSelect)
+            viewHolder.singerTxt!!.textColor = context.resources.getColor(R.color.colorSingerSelect)
         } else {
-            viewHolder.songTxt!!.textColor = R.color.colorSongNormal
-            viewHolder.singerTxt!!.textColor = R.color.colorSingerNormal
+            viewHolder.songTxt!!.textColor = context.resources.getColor(R.color.colorSongNormal)
+            viewHolder.singerTxt!!.textColor = context.resources.getColor(R.color.colorSingerNormal)
         }
 
         return convertView2
