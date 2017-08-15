@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <oscar.kotlinplayer.control.ImageBgLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#25272d"
+        android:id="@+id/background_view">
+        <TextView
+            android:id="@+id/song_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:text="Rock With You"
+            android:layout_marginTop="50dp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"  />
+
+        <TextView
+            android:id="@+id/singer_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textColor="#80FFFFFF"
+            android:textSize="15sp"
+            android:text="Michael Jackson"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/song_txt" />
+
+        <oscar.kotlinplayer.control.CoverViewPager
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:id="@+id/cover_view_pager"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="60dp"
+            android:layout_below="@id/singer_txt"
+            android:visibility="visible"/>
+
+
+
+        <Button
+            android:id="@+id/show_list_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/minibar_btn_playlist_normal"
+            android:layout_below="@id/cover_view_pager"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"/>
+
+
+        <Button
+            android:id="@+id/next_btn"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:background="@drawable/btn_next_style"
+            android:layout_below="@id/cover_view_pager"
+            android:layout_alignRight="@id/cover_view_pager"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="19dp"/>
+
+
+        <Button
+            android:id="@+id/previous_btn"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:background="@drawable/btn_pre_style"
+            android:layout_below="@id/cover_view_pager"
+            android:layout_alignLeft="@id/cover_view_pager"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="19dp"/>
+
+        <oscar.kotlinplayer.control.SongListLayout
+            android:id="@+id/song_list"
+            android:layout_width="wrap_content"
+            android:layout_height="400dp"
+            android:layout_alignParentBottom="true"/>
+
+    </oscar.kotlinplayer.control.ImageBgLayout>
+
+</android.support.constraint.ConstraintLayout>

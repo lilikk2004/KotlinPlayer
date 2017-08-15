@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+
+    <color name="colorSongSelect">#00C18d</color>
+    <color name="colorSongNormal">#FFFFFF</color>
+    <color name="colorSingerSelect">#00815e</color>
+    <color name="colorSingerNormal">#DDDDDD</color>
+</resources>

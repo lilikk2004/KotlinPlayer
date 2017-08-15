@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="400dp"
+    android:background="#BB222222">
+    <RelativeLayout
+        android:id="@+id/playlist_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:id="@+id/list_top_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play List"
+            android:textSize="20dp"
+            android:textColor="@android:color/white"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+    <View
+        android:id="@+id/list_top_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#FFDDDDDD"
+        android:layout_below="@+id/playlist_top_layout"
+        />
+
+    <RelativeLayout
+        android:id="@+id/list_bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/close"
+            android:textSize="20dp"
+            android:textColor="@android:color/white"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+    <View
+        android:id="@+id/list_bottom_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#FFDDDDDD"
+        android:layout_above="@id/list_bottom_layout"
+        />
+    <ListView
+        android:id="@+id/play_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/list_top_line"
+        android:layout_above="@id/list_bottom_line"></ListView>
+
+</RelativeLayout>
