@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.onClick
 import oscar.kotlinplayer.adapter.CoverPagerAdapter
 import oscar.kotlinplayer.event.SongEvent
@@ -16,6 +18,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        EventBus.getDefault().register(this);
 
         song_list.songList = SongManager.instance.songList
 
@@ -38,5 +42,21 @@ class MainActivity : AppCompatActivity() {
 
         previous_btn.onClick { SongManager.instance.preSong(SongEvent.Event.START) }
         next_btn.onClick { SongManager.instance.nextSong(SongEvent.Event.START) }
+    }
+
+    @Subscribe
+    fun onSongEvent(songEvent: SongEvent){
+        when(songEvent.event){
+            SongEvent.Event.START -> {
+                var song = songEvent.song
+                var curIndex = SongManager.instance.curIndex
+                cover_view_pager.currentItem = curIndex
+                song_txt.text = song.title
+                singer_txt.text = song.artist
+            }
+            else -> {
+
+            }
+        }
     }
 }
