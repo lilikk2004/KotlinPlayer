@@ -6,6 +6,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.onClick
 import oscar.kotlinplayer.adapter.CoverPagerAdapter
+import oscar.kotlinplayer.event.SongEvent
 import oscar.kotlinplayer.manager.SongManager
 
 class MainActivity : AppCompatActivity() {
@@ -31,7 +32,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        previous_btn.onClick { SongManager.instance.preSong() }
-        next_btn.onClick { SongManager.instance.nextSong() }
+        var song = SongManager.instance.curSong()
+        song_txt.text = song.title
+        singer_txt.text = song.artist
+
+        previous_btn.onClick { SongManager.instance.preSong(SongEvent.Event.START) }
+        next_btn.onClick { SongManager.instance.nextSong(SongEvent.Event.START) }
     }
 }

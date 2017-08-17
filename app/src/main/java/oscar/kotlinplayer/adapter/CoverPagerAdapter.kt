@@ -37,7 +37,7 @@ class CoverPagerAdapter(var context: Context) : PagerAdapter() {
 
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        super.destroyItem(container, position, `object`)
+        //super.destroyItem(container, position, `object`)
         container.removeView(coverViewList[position])//删除页卡
     }
 

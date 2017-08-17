@@ -2,24 +2,29 @@ package oscar.kotlinplayer.manager
 
 import android.database.Cursor
 import android.provider.MediaStore
+import org.greenrobot.eventbus.EventBus
 import oscar.kotlinplayer.MyApplication
 import oscar.kotlinplayer.bean.Song
+import oscar.kotlinplayer.event.SongEvent
 
 /**
  * Created by oscar on 2017/7/29.
  */
-class SongManager private constructor(){
-    private object Holder{val mInstance = SongManager()}
+class SongManager private constructor() {
+    private object Holder {
+        val mInstance = SongManager()
+    }
+
     companion object {
         @JvmField var TAG = "SongManager"
 
-        val instance:SongManager by lazy { Holder.mInstance }
+        val instance: SongManager by lazy { Holder.mInstance }
     }
 
     var songList: MutableList<Song> = mutableListOf()
     var curIndex: Int = 0
 
-    fun init(){
+    fun init() {
 
         songList.clear()
 
@@ -36,7 +41,7 @@ class SongManager private constructor(){
             var filePath = c.getString(c.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA))
             // 查找到相同的路径则返回，此时cursorPosition 便是指向路径所指向的Cursor 便可以返回了
 
-            if(!filePath.endsWith(".mp3")){
+            if (!filePath.endsWith(".mp3")) {
                 continue
             }
 
@@ -44,24 +49,28 @@ class SongManager private constructor(){
 
             var artist = c.getString(c.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST))
 
-            var albumId =c.getInt(c.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID))
+            var albumId = c.getInt(c.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID))
 
             var song: Song = Song(filePath, title, artist, albumId);
-            if(filePath.endsWith("mp3")) {
+            if (filePath.endsWith("mp3")) {
                 songList.add(song)
             }
         } while (c.moveToNext())
     }
 
-    fun nextSong(){
-        if(curIndex < songList.size - 1){
+    fun nextSong(event: SongEvent.Event) {
+        if (curIndex < songList.size - 1) {
             curIndex++
+            EventBus.getDefault().post(SongEvent(songList[curIndex], event))
         }
     }
 
-    fun preSong(){
-        if(curIndex > 0){
+    fun preSong(event: SongEvent.Event) {
+        if (curIndex > 0) {
             curIndex--
+            EventBus.getDefault().post(SongEvent(songList[curIndex], event))
         }
     }
+
+    fun curSong(): Song = songList[curIndex]
 }
