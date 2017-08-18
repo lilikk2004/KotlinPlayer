@@ -2,11 +2,14 @@ package oscar.kotlinplayer
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.onClick
+import org.jetbrains.anko.support.v4.onPageChangeListener
+import org.jetbrains.anko.toast
 import oscar.kotlinplayer.adapter.CoverPagerAdapter
 import oscar.kotlinplayer.event.SongEvent
 import oscar.kotlinplayer.manager.SongManager
@@ -42,6 +45,10 @@ class MainActivity : AppCompatActivity() {
 
         previous_btn.onClick { SongManager.instance.preSong(SongEvent.Event.START) }
         next_btn.onClick { SongManager.instance.nextSong(SongEvent.Event.START) }
+
+        cover_view_pager.onPageChangeListener {
+            onPageSelected {position -> SongManager.instance.setCurSong(position, SongEvent.Event.START)}
+        }
     }
 
     @Subscribe
@@ -49,10 +56,12 @@ class MainActivity : AppCompatActivity() {
         when(songEvent.event){
             SongEvent.Event.START -> {
                 var song = songEvent.song
-                var curIndex = SongManager.instance.curIndex
-                cover_view_pager.currentItem = curIndex
+                if(cover_view_pager.currentItem != SongManager.instance.curIndex) {
+                    cover_view_pager.currentItem = SongManager.instance.curIndex
+                }
                 song_txt.text = song.title
                 singer_txt.text = song.artist
+                song_list.songListAdapter!!.notifyDataSetChanged()
             }
             else -> {
 

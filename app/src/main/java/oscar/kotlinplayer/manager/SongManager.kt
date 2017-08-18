@@ -60,17 +60,21 @@ class SongManager private constructor() {
 
     fun nextSong(event: SongEvent.Event) {
         if (curIndex < songList.size - 1) {
-            curIndex++
-            EventBus.getDefault().post(SongEvent(songList[curIndex], event))
+            setCurSong(curIndex + 1, event)
         }
     }
 
     fun preSong(event: SongEvent.Event) {
         if (curIndex > 0) {
-            curIndex--
-            EventBus.getDefault().post(SongEvent(songList[curIndex], event))
+            setCurSong(curIndex - 1, event)
         }
     }
 
     fun curSong(): Song = songList[curIndex]
+
+    fun setCurSong(index: Int, event: SongEvent.Event){
+        curIndex = index
+        EventBus.getDefault().post(SongEvent(songList[curIndex], event))
+
+    }
 }
