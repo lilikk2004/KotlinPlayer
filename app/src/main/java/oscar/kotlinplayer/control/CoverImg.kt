@@ -2,17 +2,26 @@ package oscar.kotlinplayer.control
 
 import android.content.Context
 import android.graphics.*
-import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import oscar.kotlinplayer.R
 import oscar.kotlinplayer.bean.Song
+import oscar.kotlinplayer.utils.getAlbumArt
 
 /**
  * Created by oscar on 2016/6/1.
  */
 class CoverImg : View {
+    companion object {
+        val TAG = "CoverImg"
+
+        private val VELOCITY = 1
+        private val SLOW = 2
+        private val ROTATE_DELAY = 20.toLong()
+    }
     internal var playImage: Bitmap? = null
     internal var drawX: Int = 0
     internal var drawY: Int = 0
@@ -23,12 +32,30 @@ class CoverImg : View {
     private var needMeasure = false
 
     var song:Song = Song();
+    var isRotate = false
+    var rotateHandler = Handler(Looper.getMainLooper())
+
+    var rotateFun = {}
 
 
-    constructor(context: Context) : super(context) {}
+    constructor(context: Context) : super(context) {
+        rotateFun = {
+            if(isRotate){
+                updateCoverRotate()
+                postDelayed(rotateFun, ROTATE_DELAY)
+            }
+        }
+    }
 
 
-    constructor(context: Context, paramAttributeSet: AttributeSet) : super(context, paramAttributeSet) {}
+    constructor(context: Context, paramAttributeSet: AttributeSet) : super(context, paramAttributeSet) {
+        rotateFun = {
+            if(isRotate){
+                updateCoverRotate()
+                postDelayed(rotateFun, ROTATE_DELAY)
+            }
+        }
+    }
 
     fun makeDrawCover() {
         val width = width
@@ -51,7 +78,7 @@ class CoverImg : View {
         val imgDrawRect = Rect(playLength / 6, playLength / 6, playLength * 5 / 6, playLength * 5 / 6)
 
 
-        val albumArt = getAlbumArt(song.albumId)
+        val albumArt = getAlbumArt(song.albumId, context)
         var bitmap = BitmapFactory.decodeFile(albumArt)
 
         val imgSrcRect: Rect
@@ -71,30 +98,6 @@ class CoverImg : View {
 
         imgCanvas.drawBitmap(bitmap, imgSrcRect, imgDrawRect, paint)
         imgCanvas.drawBitmap(play_disc, playSrc, playDrawRect, paint)
-    }
-
-
-    /**
-
-     * 功能 通过album_id查找 album_art 如果找不到返回null
-
-     * @param albumId
-     *  封面的id
-     * @return album_art
-     */
-    private fun getAlbumArt(albumId: Int): String {
-        val mUriAlbums = "content://media/external/audio/albums"
-        val projection = arrayOf("album_art")
-        var cur = context.contentResolver.query(
-                Uri.parse(mUriAlbums + "/" + Integer.toString(albumId)),
-                projection, null, null, null)
-        var album_art: String = ""
-        if (cur.count > 0 && cur.columnCount > 0) {
-            cur.moveToNext()
-            album_art = cur.getString(0)
-        }
-        cur.close()
-        return album_art
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -125,15 +128,17 @@ class CoverImg : View {
         postInvalidate()
     }
 
+    fun start(){
+        isRotate = true
+        postDelayed(rotateFun, 200)
+    }
+
+    fun stop(){
+        isRotate = false
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         needMeasure = true
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-    }
-
-    companion object {
-        val TAG = "CoverImg"
-
-        private val VELOCITY = 1
-        private val SLOW = 2
     }
 }
