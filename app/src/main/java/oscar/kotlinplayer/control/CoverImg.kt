@@ -31,7 +31,7 @@ class CoverImg : View {
     private var centerY: Float = 0.toFloat()
     private var needMeasure = false
 
-    var song:Song = Song();
+    var song:Song = Song()
     var isRotate = false
     var rotateHandler = Handler(Looper.getMainLooper())
 

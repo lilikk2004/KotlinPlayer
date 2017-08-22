@@ -1,8 +1,14 @@
 package oscar.kotlinplayer
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
@@ -12,10 +18,13 @@ import org.jetbrains.anko.support.v4.onPageChangeListener
 import oscar.kotlinplayer.adapter.CoverPagerAdapter
 import oscar.kotlinplayer.event.SongEvent
 import oscar.kotlinplayer.manager.SongManager
+import oscar.kotlinplayer.service.PlayService
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var coverPagerAdapter: CoverPagerAdapter
+    lateinit var serviceConnection: ServiceConnection
+    private var mPlayService: PlayService? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +71,23 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        serviceConnection = object: ServiceConnection{
+            override fun onServiceConnected(p0: ComponentName?, binder: IBinder?) {
+                Log.d("onServiceConnected", "connected")
+                if (binder == null) {
+                    return
+                }
+                mPlayService = (binder as PlayService.PlayBinder).service
+            }
+
+            override fun onServiceDisconnected(p0: ComponentName?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+        }
+        val intent = Intent(this, PlayService::class.java)
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     @Subscribe
@@ -75,7 +101,10 @@ class MainActivity : AppCompatActivity() {
                 song_txt.text = song.title
                 singer_txt.text = song.artist
                 song_list.songListAdapter!!.notifyDataSetChanged()
-
+                if(mPlayService != null){
+                    mPlayService!!.setSong(song)
+                    mPlayService!!.start()
+                }
 
 /*
 
@@ -90,5 +119,10 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(serviceConnection)
     }
 }

@@ -3,6 +3,7 @@ package oscar.kotlinplayer.service
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
+import android.os.Binder
 import android.os.IBinder
 import oscar.kotlinplayer.bean.Song
 
@@ -11,11 +12,16 @@ import oscar.kotlinplayer.bean.Song
  */
 class PlayService() : Service() {
 
-    lateinit var mediaPlayer: MediaPlayer
+    var mediaPlayer: MediaPlayer = MediaPlayer()
+    var playBinder = PlayBinder()
+
+    inner class PlayBinder : Binder() {
+        val service: PlayService
+            get() = this@PlayService
+    }
 
     override fun onBind(p0: Intent?): IBinder {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        mediaPlayer = MediaPlayer()
+        return playBinder
     }
 
      fun setSong(song: Song){
