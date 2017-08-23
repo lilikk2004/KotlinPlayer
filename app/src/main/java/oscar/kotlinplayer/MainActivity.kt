@@ -56,6 +56,23 @@ class MainActivity : AppCompatActivity() {
 
         previous_btn.onClick { SongManager.instance.preSong(SongEvent.Event.START) }
         next_btn.onClick { SongManager.instance.nextSong(SongEvent.Event.START) }
+        play_btn.onClick{
+            if(mPlayService!!.isPlaying()){
+                var index = SongManager.instance.curIndex
+                coverPagerAdapter.coverViewList[index].stop()
+
+                mPlayService!!.pause()
+                play_btn.setBackgroundResource(R.drawable.btn_play)
+            }else{
+                var index = SongManager.instance.curIndex
+                coverPagerAdapter.coverViewList[index].start()
+
+                mPlayService!!.start()
+                play_seek_bar.setMax(mPlayService!!.getDuration())
+                total_time.text = formatTime(mPlayService!!.getDuration())
+                play_btn.setBackgroundResource(R.drawable.btn_pause)
+            }
+        }
 
         cover_view_pager.onPageChangeListener {
             onPageSelected {position ->
@@ -102,6 +119,8 @@ class MainActivity : AppCompatActivity() {
                     return
                 }
                 mPlayService = (binder as PlayService.PlayBinder).service
+                var song = SongManager.instance.curSong()
+                mPlayService!!.setSong(song)
             }
 
             override fun onServiceDisconnected(p0: ComponentName?) {
@@ -129,6 +148,7 @@ class MainActivity : AppCompatActivity() {
                     mPlayService!!.start()
                     play_seek_bar.setMax(mPlayService!!.getDuration())
                     total_time.text = formatTime(mPlayService!!.getDuration())
+                    play_btn.setBackgroundResource(R.drawable.btn_pause)
                 }
 
 /*

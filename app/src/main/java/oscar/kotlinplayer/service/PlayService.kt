@@ -76,10 +76,12 @@ class PlayService() : Service() {
         }
     }
 
-
-
     fun getDuration(): Int{
         return mediaPlayer.duration
+    }
+
+    fun isPlaying(): Boolean{
+        return mediaPlayer.isPlaying
     }
 
 
