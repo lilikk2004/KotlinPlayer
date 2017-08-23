@@ -167,6 +167,9 @@ class MainActivity : AppCompatActivity() {
                 play_seek_bar.progress = songEvent.value
                 current_time.text = formatTime(songEvent.value)
             }
+            SongEvent.Event.COMPLETE -> {
+                SongManager.instance.nextSong(SongEvent.Event.START)
+            }
             else -> {
 
             }

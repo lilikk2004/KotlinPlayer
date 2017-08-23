@@ -37,6 +37,11 @@ class PlayService() : Service() {
 
     override fun onBind(p0: Intent?): IBinder {
         timer.schedule(timerTask, 0, 25)
+        mediaPlayer.setOnCompletionListener {
+            var curSong = SongManager.instance.curSong()
+            var event = SongEvent(curSong, SongEvent.Event.COMPLETE)
+            EventBus.getDefault().post(event)
+        }
         return playBinder
     }
 
