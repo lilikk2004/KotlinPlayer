@@ -13,7 +13,9 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.onClick
+import org.jetbrains.anko.onSeekBarChangeListener
 import org.jetbrains.anko.support.v4.onPageChangeListener
 import oscar.kotlinplayer.adapter.CoverPagerAdapter
 import oscar.kotlinplayer.event.SongEvent
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var coverPagerAdapter: CoverPagerAdapter
     lateinit var serviceConnection: ServiceConnection
     private var mPlayService: PlayService? = null
+    var isTouchSeekBar = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +75,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        play_seek_bar.onSeekBarChangeListener {
+
+            onProgressChanged{seekBar, progress, fromUser -> if(fromUser) {current_time.text = formatTime(seekBar!!.progress)}}
+
+            onStartTrackingTouch {
+                seekBar -> run{
+                    isTouchSeekBar = true
+                }
+            }
+
+            onStopTrackingTouch {
+                seekBar -> run{
+                    if(mPlayService != null)
+                        mPlayService!!.seekTo(seekBar!!.progress)
+                    isTouchSeekBar = false
+                }
+            }
+
+        }
+
         serviceConnection = object: ServiceConnection{
             override fun onServiceConnected(p0: ComponentName?, binder: IBinder?) {
                 Log.d("onServiceConnected", "connected")
@@ -90,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSongEvent(songEvent: SongEvent){
         when(songEvent.event){
             SongEvent.Event.START -> {
@@ -104,6 +127,8 @@ class MainActivity : AppCompatActivity() {
                 if(mPlayService != null){
                     mPlayService!!.setSong(song)
                     mPlayService!!.start()
+                    play_seek_bar.setMax(mPlayService!!.getDuration())
+                    total_time.text = formatTime(mPlayService!!.getDuration())
                 }
 
 /*
@@ -115,10 +140,24 @@ class MainActivity : AppCompatActivity() {
                     }
                 }*/
             }
+            SongEvent.Event.PROGRESS -> {
+                if(isTouchSeekBar) {
+                    return;
+                }
+                play_seek_bar.progress = songEvent.value
+                current_time.text = formatTime(songEvent.value)
+            }
             else -> {
 
             }
         }
+    }
+
+    fun formatTime(progress: Int): String{
+        var secondCount = progress / 1000
+        var second = secondCount % 60
+        var minute = secondCount / 60
+        return String.format("%02d:%02d", minute, second)
     }
 
     override fun onDestroy() {

@@ -5,7 +5,11 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
+import org.greenrobot.eventbus.EventBus
 import oscar.kotlinplayer.bean.Song
+import oscar.kotlinplayer.event.SongEvent
+import oscar.kotlinplayer.manager.SongManager
+import java.util.*
 
 /**
  * Created by oscar on 2017/8/9.
@@ -14,6 +18,17 @@ class PlayService() : Service() {
 
     var mediaPlayer: MediaPlayer = MediaPlayer()
     var playBinder = PlayBinder()
+    var timer = Timer()
+    var timerTask = object: TimerTask(){
+        override fun run() {
+            if(mediaPlayer.isPlaying) {
+                var curSong = SongManager.instance.curSong()
+                var event = SongEvent(curSong, SongEvent.Event.PROGRESS)
+                event.value = mediaPlayer.currentPosition
+                EventBus.getDefault().post(event)
+            }
+        }
+    }
 
     inner class PlayBinder : Binder() {
         val service: PlayService
@@ -21,6 +36,7 @@ class PlayService() : Service() {
     }
 
     override fun onBind(p0: Intent?): IBinder {
+        timer.schedule(timerTask, 0, 25)
         return playBinder
     }
 
@@ -51,4 +67,20 @@ class PlayService() : Service() {
             e.printStackTrace()
         }
     }
+
+    fun seekTo(msec: Int){
+        try {
+            mediaPlayer.seekTo(msec)
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
+
+
+
+    fun getDuration(): Int{
+        return mediaPlayer.duration
+    }
+
+
 }
