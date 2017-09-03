@@ -4,14 +4,14 @@ package oscar.kotlinplayer.control
  * Created by oscar on 2017/8/6.
  */
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.os.Handler;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.widget.RelativeLayout;
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.os.Handler
+import android.util.AttributeSet
+import android.util.Log
+import android.widget.RelativeLayout
 
 /**
  * Created by oscar on 2016/6/26.
@@ -24,7 +24,8 @@ public class ImageBgLayout : RelativeLayout {
         val IMG_A = 1
         val IMG_B = 2
         val CHANGE_DELAY = 20.toLong()
-        val PER_ALPHA = 15
+        val PER_ALPHA = 12
+        var TOTAL_ALPHA = 192
     }
 
     private var bitmapA : Bitmap? = null
@@ -33,6 +34,7 @@ public class ImageBgLayout : RelativeLayout {
     private var alphaA = 0
     private var mainHandler = Handler()
     private var changeRunnable = {}
+    //private var matrix = getMatrix()
 
     constructor (context : Context, attrs : AttributeSet) : super(context, attrs){
         setWillNotDraw(false)
@@ -46,8 +48,8 @@ public class ImageBgLayout : RelativeLayout {
                 }
             } else if (mode == IMG_A) {
                 alphaA += PER_ALPHA;
-                if (alphaA >= 255) {
-                    alphaA = 255;
+                if (alphaA >= TOTAL_ALPHA) {
+                    alphaA = TOTAL_ALPHA;
                 } else {
                     mainHandler.postDelayed(changeRunnable, CHANGE_DELAY);
                 }
@@ -63,9 +65,10 @@ public class ImageBgLayout : RelativeLayout {
             return
         }
         var paint = Paint()
-        if(alphaA == 255){
+        if(alphaA == TOTAL_ALPHA){
             if(bitmapA != null) {
                 Log.d(TAG, "draw bitmapA")
+                paint.alpha = TOTAL_ALPHA
                 canvas.drawBitmap(bitmapA, 0.toFloat(), 0.toFloat(), paint)
             }
             return
@@ -73,6 +76,7 @@ public class ImageBgLayout : RelativeLayout {
         if(alphaA == 0){
             if(bitmapB != null) {
                 Log.d(TAG, "draw bitmapB")
+                paint.alpha = TOTAL_ALPHA
                 canvas.drawBitmap(bitmapB, 0.toFloat(), 0.toFloat(), paint)
             }
             return
@@ -80,14 +84,14 @@ public class ImageBgLayout : RelativeLayout {
 
         paint.alpha = alphaA
         canvas.drawBitmap(bitmapA, 0.toFloat(), 0.toFloat(), paint)
-        paint.alpha = 255 - alphaA
+        paint.alpha = TOTAL_ALPHA - alphaA
         canvas.drawBitmap(bitmapB, 0.toFloat(), 0.toFloat(), paint)
     }
 
     fun setBitmap(bitmap : Bitmap){
         when(mode){
             IMG_NULL->{
-                alphaA = 255
+                alphaA = TOTAL_ALPHA
                 mode = IMG_A
                 bitmapA = bitmap
                 postInvalidate()
@@ -104,5 +108,6 @@ public class ImageBgLayout : RelativeLayout {
             }
         }
     }
+
 
 }

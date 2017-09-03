@@ -4,6 +4,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.view.ViewPager
@@ -14,13 +16,19 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.onSeekBarChangeListener
 import org.jetbrains.anko.support.v4.onPageChangeListener
+import org.jetbrains.anko.uiThread
 import oscar.kotlinplayer.adapter.CoverPagerAdapter
 import oscar.kotlinplayer.event.SongEvent
 import oscar.kotlinplayer.manager.SongManager
 import oscar.kotlinplayer.service.PlayService
+import oscar.kotlinplayer.utils.ImageUtil
+import oscar.kotlinplayer.utils.getSongImg
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -151,14 +159,27 @@ class MainActivity : AppCompatActivity() {
                     play_btn.setBackgroundResource(R.drawable.btn_pause)
                 }
 
-/*
+                //var bgBitmap = getSongImg(song, applicationContext)
+                //var curBitmap = ImageUtil.doCut(bitmap, width, height)
+                //var blurBitmap = ImageUtil.doBlur(bgBitmap, 20)
+                //background_view.setBlurBitmap(bgBitmap)
+                //background_view.setBitmap(bgBitmap)
+
+
 
                 doAsync {
                     var bgBitmap = getSongImg(song, applicationContext)
+                    var cutBitmap = ImageUtil.doCut(bgBitmap, background_view.width, background_view.height)
+                    var blurBitmap = ImageUtil.doBlur(cutBitmap, 20)
+                    var matrix = Matrix()
+                    matrix.postScale(background_view.width.toFloat() / blurBitmap.width, background_view.height.toFloat() / blurBitmap.height )
+
+                    val resizeBmp = Bitmap.createBitmap(blurBitmap, 0, 0, blurBitmap.width,
+                            blurBitmap.height, matrix, true)
                     uiThread {
-                        background_view.setBitmap(bgBitmap)
+                        background_view.setBitmap(resizeBmp)
                     }
-                }*/
+                }
             }
             SongEvent.Event.PROGRESS -> {
                 if(isTouchSeekBar) {
