@@ -24,7 +24,7 @@ public class ImageBgLayout : RelativeLayout {
         val IMG_A = 1
         val IMG_B = 2
         val CHANGE_DELAY = 20.toLong()
-        val PER_ALPHA = 12
+        val PER_ALPHA = 6
         var TOTAL_ALPHA = 192
     }
 
@@ -84,17 +84,20 @@ public class ImageBgLayout : RelativeLayout {
 
         paint.alpha = alphaA
         canvas.drawBitmap(bitmapA, 0.toFloat(), 0.toFloat(), paint)
-        paint.alpha = TOTAL_ALPHA - alphaA
-        canvas.drawBitmap(bitmapB, 0.toFloat(), 0.toFloat(), paint)
+        if(bitmapB != null) {
+            paint.alpha = TOTAL_ALPHA - alphaA
+            canvas.drawBitmap(bitmapB, 0.toFloat(), 0.toFloat(), paint)
+        }
     }
 
     fun setBitmap(bitmap : Bitmap){
         when(mode){
             IMG_NULL->{
-                alphaA = TOTAL_ALPHA
+                alphaA = 0
                 mode = IMG_A
                 bitmapA = bitmap
-                postInvalidate()
+                //postInvalidate()
+                mainHandler.postDelayed(changeRunnable, CHANGE_DELAY)
             }
             IMG_A->{
                 mode = IMG_B

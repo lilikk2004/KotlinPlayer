@@ -58,9 +58,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //SongManager.instance.setCurSong(0, SongEvent.Event.START)
         var song = SongManager.instance.curSong()
         song_txt.text = song.title
         singer_txt.text = song.artist
+        coverPagerAdapter.coverViewList[0].start()
 
         previous_btn.onClick { SongManager.instance.preSong(SongEvent.Event.START) }
         next_btn.onClick { SongManager.instance.nextSong(SongEvent.Event.START) }
@@ -127,8 +129,13 @@ class MainActivity : AppCompatActivity() {
                     return
                 }
                 mPlayService = (binder as PlayService.PlayBinder).service
-                var song = SongManager.instance.curSong()
+                SongManager.instance.setCurSong(0, SongEvent.Event.START)
+/*                var song = SongManager.instance.curSong()
                 mPlayService!!.setSong(song)
+                mPlayService!!.start()
+                play_seek_bar.setMax(mPlayService!!.getDuration())
+                total_time.text = formatTime(mPlayService!!.getDuration())
+                play_btn.setBackgroundResource(R.drawable.btn_pause)*/
             }
 
             override fun onServiceDisconnected(p0: ComponentName?) {
@@ -173,6 +180,7 @@ class MainActivity : AppCompatActivity() {
                     var blurBitmap = ImageUtil.doBlur(cutBitmap, 20)
                     var matrix = Matrix()
                     matrix.postScale(background_view.width.toFloat() / blurBitmap.width, background_view.height.toFloat() / blurBitmap.height )
+                    Thread.sleep(500)
 
                     val resizeBmp = Bitmap.createBitmap(blurBitmap, 0, 0, blurBitmap.width,
                             blurBitmap.height, matrix, true)
