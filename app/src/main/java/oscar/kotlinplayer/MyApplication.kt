@@ -1,6 +1,7 @@
 package oscar.kotlinplayer
 
 import android.app.Application
+import oscar.kotlinplayer.utils.PermissionsChecker
 
 /**
  * Created by oscar on 2017/7/29.
@@ -17,6 +18,7 @@ class MyApplication : Application(){
             return instance;
         }
     }
+
 
     override fun onCreate() {
         super.onCreate()
