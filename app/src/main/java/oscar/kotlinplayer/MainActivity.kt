@@ -27,6 +27,9 @@ import oscar.kotlinplayer.manager.SongManager
 import oscar.kotlinplayer.service.PlayService
 import oscar.kotlinplayer.utils.ImageUtil
 import oscar.kotlinplayer.utils.getSongImg
+import android.view.animation.AnimationUtils
+
+
 
 
 
@@ -53,6 +56,8 @@ class MainActivity : AppCompatActivity() {
         show_list_btn.onClick {
             if(song_list.visibility == View.GONE){
                 song_list.visibility = View.VISIBLE
+                val animation = AnimationUtils.loadAnimation(this, R.anim.anim_translate_song_list)
+                song_list.startAnimation(animation)
             }else{
                 song_list.visibility = View.GONE
             }
