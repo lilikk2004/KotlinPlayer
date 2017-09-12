@@ -12,6 +12,8 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -27,7 +29,6 @@ import oscar.kotlinplayer.manager.SongManager
 import oscar.kotlinplayer.service.PlayService
 import oscar.kotlinplayer.utils.ImageUtil
 import oscar.kotlinplayer.utils.getSongImg
-import android.view.animation.AnimationUtils
 
 
 
@@ -56,10 +57,24 @@ class MainActivity : AppCompatActivity() {
         show_list_btn.onClick {
             if(song_list.visibility == View.GONE){
                 song_list.visibility = View.VISIBLE
-                val animation = AnimationUtils.loadAnimation(this, R.anim.anim_translate_song_list)
+                //val animation = AnimationUtils.loadAnimation(this, R.anim.anim_translate_song_list)
+                val animation = AnimationUtils.loadAnimation(this, R.anim.abc_slide_in_bottom)
                 song_list.startAnimation(animation)
             }else{
-                song_list.visibility = View.GONE
+                val animation = AnimationUtils.loadAnimation(this, R.anim.abc_slide_out_bottom)
+                song_list.startAnimation(animation)
+                animation.setAnimationListener(object :Animation.AnimationListener{
+                    override fun onAnimationRepeat(p0: Animation?) {
+                    }
+
+                    override fun onAnimationEnd(p0: Animation?) {
+                        song_list.visibility = View.GONE
+                    }
+
+                    override fun onAnimationStart(p0: Animation?) {
+                    }
+
+                })
             }
         }
 
